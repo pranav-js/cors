@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1.0" />
+    <title>Document</title>
+    <script src="https://uat-elements.zwitch.io/zwitch.js"></script>
+  </head>
+  <script>
+    window.onload = () => {
+      let secret;
+      const URL = 'https://uat-api.zwitch.io';
+      const AK = 'ak_test_NjF75cJ6WYDH04y6ZDbntkRan1eia0k93qUf';
+      const SK = 'sk_test_B22ytaa15edFeHPZFjN61u4kjiPr6w6Haoaw';
+      const customer_id = 'cus_ZKmCG42ttQK3H2FVaIXRPDf2h';
+      const account_id = 'sa_VFUyvPia4EDI6ofa2AwqljKPR';
+      secret = (async () => {
+        let res = await fetch(
+          `${URL}/backoffice/generate-token`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${AK}:${SK}`,
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              type: "customer",
+              customer_id,
+              request_details: {
+                account_id,
+              },
+              metadata: {}
+            })
+          }
+        );
+        return res.json();
+      })();
+
+      /* -------------------------------------------------------------
+       * Below is the code snippet that you would use to embed the component
+         ------------------------------------------------------------- */
+
+      (async () => {
+        const token = await secret;
+        const creds = {
+          token: token.data.session,
+        };
+        Zwitch.checkBalance("balance", creds, {
+          onSuccess: (resp) => { console.log(resp); },
+          onError:  (resp) => { console.log(resp); },
+        });
+        /* This is OPTIONAL real-time appearance & last param to SDK, if not passed will be fetched from API
+         * if passsed will merge with whatever recieved from API */
+      })();
+    };
+  </script>
+  <body style="height: 100%;margin: 0; overflow: hidden; padding: 12px;">
+  </body>
+</html>
